@@ -127,7 +127,7 @@ Now lets look into the positional data, specifically the latitude and longitude 
 To plot this locational data, I plan to use ggmpa. To use ggmap, I had to create a free account with google cloud. I then had to request a key to the static map api. This allowed me to get the map that I would be plotting the location data onto. 
 
 ```{r include = TRUE, fig.width=5, fig.height=5}
-register_google(key = "AIzaSyDZ5IQIDSQKU7lZmZRqpwwtR-Zx7Dc60dc")
+register_google(key = "YourKey")
 map <- get_googlemap(center = c(lon = -119.4179, lat = 36.7783),
                     zoom = 6, scale = 2,
                     maptype ='roadmap',
