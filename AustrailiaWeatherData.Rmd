@@ -40,7 +40,6 @@ table(Weather_Data$Location) %>% sort(decreasing = TRUE)
 sapply(Weather_Data, function(count) sum(is.na(count)))
 length(unique(Weather_Data$Location))
 ```
-## Results:
 
 It looks like we have a date column, a categorical column for locations, and continuous number type columns. It seems that the spread is pretty even for per location, With the largest amount of observations Canberra at 3436 and the lowest in Katherine, Nhil and Uluru at 1578. There are 49 cites in this data set. Also there are plenty of NA's in this data set, so I'll keep that in mind while thinking about which variables will help us predict rainfall in Australia. Due to the large amount of continuous variables, I will use histograms later on in the report.
 
