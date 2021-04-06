@@ -1,0 +1,256 @@
+---
+title: "Hw4"
+author: "Peter Sullivan"
+date: "3/17/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(ggmap)
+library(lubridate)
+library(dplyr)
+
+
+
+
+setwd("C:/Users/pjsul/OneDrive/Desktop/R HWS/Hw4/")
+Weather_Data <- read_csv("weatherAUS.csv", na = c("", "NA"))
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+
+```
+# Data Description
+
+This data set was found on Kagle.com. This data has 23 variables and 145,000 measurements. This data set has 10 years of daily weather observations from various locations in Australia. The data was published with the intent of using various weather indicators to predict whether it is raining or will rain the next day.Two columns, rain today and rain tomorrow are used as the target columns. If there was 1mm or more of rain, then that will count as "Yes", meaning there was rain that day.
+
+Before I start plotting, lets take a look at the variables we are working with. To do this, I will use the str function, sapply with sum is.na, and length with unique to count the locations.
+
+
+
+```{r echo=TRUE}
+str(Weather_Data)
+table(Weather_Data$Location) %>% sort(decreasing = TRUE)
+sapply(Weather_Data, function(count) sum(is.na(count)))
+length(unique(Weather_Data$Location))
+```
+## Results:
+
+It looks like we have a date column, a categorical column for locations, and continuous number type columns. It seems that the spread is pretty even for per location, With the largest amount of observations Canberra at 3436 and the lowest in Katherine, Nhil and Uluru at 1578. There are 49 cites in this data set. Also there are plenty of NA's in this data set, so I'll keep that in mind while thinking about which variables will help us predict rainfall in Australia. Due to the large amount of continuous variables, I will use histograms later on in the report.
+
+Before we try the histograms, lets plot the top 10 cities by number of observations in a bar chart.
+\newpage
+
+### Visuals
+
+Here are the top 10 cities based on rainfall: This time I will try to change the data set while piping directly into the plot.
+
+```{r include=TRUE, echo=TRUE}
+
+Weather_Data %>%
+  count(Location, sort = TRUE)%>%
+  slice(1:10)%>%
+  rename(Total_count = n)%>%
+  ggplot()+
+  geom_col(aes(x = Location, y =Total_count, fill = Location), show.legend = FALSE )+
+  geom_text(aes(x = Location, y =Total_count, label = Total_count), vjust = 3)+
+  theme_classic()+
+  labs(title = "Rainfall Observations")
+ 
+
+
+  
+  
+```
+# Results
+
+Well that wasn't very helpful. Lets get the total rainfall for the top 10 citys! This can be done by using a groupby and arrange by decending. Also it should be noted that when plotting with geo_col, the columns will be alphabetically plotted on the x axis.
+\newpage
+
+```{r include = TRUE, echo=TRUE}
+
+Weather_Data %>%
+ group_by(Location)%>%
+  summarise( total_rain = sum(Rainfall, na.rm = TRUE))%>%
+  arrange(desc(total_rain))%>%
+  slice(1:10)%>%
+  ggplot()+
+  geom_col(aes(x = Location, y =total_rain, fill = Location), show.legend = FALSE )+
+  geom_text(aes(x = Location, y =total_rain, label = total_rain), hjust = 1.1)+
+  theme_classic()+
+  coord_flip()+
+  labs(title = "Total Amount of Rain")+
+  ylab("Total Rain fall (mm)")
+
+
+
+```
+
+# Results
+
+IT looks like Caims had the largest amount of Rainfall at 17,157.2 mm. Due to the overlapping x labels, I used coordflip to flip the x and y axis's. I also wanted to rename the new x axis, and to do that I changed the ylab name. Even though the axis's are flipped, Location is still seen as the x axis in ggplot.
+
+
+# Exploring
+
+I have a lot of continuous variables. To get the idea of their layout, lets try using some histograms. To get the most bang for buck, I also want to compare similar variables. Lets look at min and max temp recorded per observation. To make this data a little simpler, we are only going to look at the top 10 cities based on amount of rainfall recorded.To have two variables on one axis, I used the density function as the y variable in the histogram. 
+
+
+```{r include=TRUE, echo=TRUE}
+rainfall_countries <- Weather_Data %>%
+ group_by(Location)%>%
+  summarise(total_rain = sum(Rainfall, na.rm = TRUE))%>%
+  arrange(desc(total_rain))%>%
+  slice(1:10)
+
+ 
+countryList <- unique(rainfall_countries$Location)
+
+
+
+Top_10 <-Weather_Data %>%
+  filter(Location %in% countryList)
+
+
+
+Top_10 %>% 
+  ggplot()+
+  geom_histogram(aes(x = MinTemp, y= ..density.., color = Location) )+
+  annotate("text", x = 3, y =.4, label = "Min")+
+  geom_histogram(aes(x = MaxTemp, y = -..density.., fill = Location))+
+  annotate("text", x = 3, y =-.4, label = "Max")+
+  xlab("Temperature")+
+  labs(title = "Max vs Min Temperature")
+  
+
+Top_10 %>%
+  ggplot(aes(x = Humidity9am, y =..density..))+
+  geom_freqpoly(aes(color = Location))+
+  annotate("text", x = 15, y = .025, label = "9AM")+
+  geom_freqpoly(aes(x = Humidity3pm, y = -..density.., color = Location))+
+  annotate("text", x = 15, y = -.025, label = "3PM")+
+  xlab("Humidity")+
+  labs(title = "9AM vs 3PM Humidity")
+
+
+
+
+
+```
+
+
+## Results
+
+
+The min vs max temps seem to have a normal distribution. It seems the most seen temperature for recorded mins is  roughly 22 degrees celsius and 28 degrees celsius for max temp. The colors represent the top 10 cities based on their rainfall. I used two different ways to visualize the cities, it looks like the bottom histogram (Max temp) is a bit easier to visualize the cities. I also used annotate instead of geom_label, since geom_label was taking very long to run.
+
+The bottom figure is a histogram using geom_freqpoly. Same idea for this one, I filtered by cities. It's a nice visualization, though, a bit tough to tell the difference between each city. Mount Ginini has the highest recorded 9AM and 3PM humidity. This could be something to look into. 
+
+Below I've started to play around with Histograms and facet wraps:
+
+
+```{r include=TRUE, echo=TRUE}
+
+
+Top_10 %>% 
+  ggplot()+
+  geom_histogram(aes(x = MinTemp))+
+  facet_wrap(~Location)
+
+
+Top_10 %>% 
+  ggplot()+
+  geom_histogram(aes(x = MaxTemp))+
+  facet_wrap(~Location)
+
+
+Top_10 %>% 
+  ggplot()+
+  geom_histogram(aes(x = MaxTemp))+
+  facet_wrap(~RainToday)+
+  labs(title = "Max Temp vs Rain Today")
+
+Top_10 %>% 
+  ggplot()+
+  geom_histogram(aes(x = MaxTemp))+
+  facet_wrap(~RainTomorrow)+
+  labs(title = "Max Temp vs Rain Tomorrow")
+
+
+
+
+Top_10 %>% 
+  ggplot()+
+  geom_histogram(aes(x = Humidity9am))+
+  facet_wrap(~RainToday)+
+  labs(title = "9AM Humidity vs Rain Today")
+
+Top_10 %>% 
+  ggplot()+
+  geom_histogram(aes(x = Humidity9am))+
+  facet_wrap(~RainTomorrow)+
+  labs(title = "9AM Humidity vs Rain Tomorrow")
+
+
+
+
+```
+
+## Results
+
+The first two facet wraps (Min and Max Temp vs Location) just give us a little more insight into how the histograms above are compiled. I didn't find these two charts too helpful. For Max Temp vs Rain Today/Tomorrow figures, I also found these not too helpful in whether predicting there will be rain or no rain. 
+
+The final two figures, 9AM humidity vs Rain Today/Tomorrow figures did seem to offer a bit of insight. It seems that if we are to expect rain that day or the next day, there needs to be a higher humidity. Days will low humidity in the morning have a higher probability of not raining today or tomorrow.
+
+
+
+## Final Figures
+
+I kind of feel like I've been going deeper and deeper down the rabbit hole. Each chart and figure leads me to a new idea, and is pushing me towards plotting and comparing other variables under different circumstances. I've only begun to scratch the surface of what this data set is offering.
+
+I know believe that humidity is a major factor in predicting rain. So know I will compare temp, humidity and whether it rained today or tomorrow using a facet grid. 
+
+I will also take a closer look into the humidity of 9AM using a violin plot to confirm that Mount Ginini had the highest distribution of high humidity based on the other top 10 cities.
+\newpage
+
+
+
+```{r include = TRUE, echo=TRUE, fig.width= 7, fig.height=7}
+Top_10 %>%
+ggplot() + 
+    geom_smooth(aes(x = Temp3pm, y = Humidity3pm, method = "lm", fill = "red")) + 
+    facet_grid(RainToday ~ RainTomorrow, labeller = label_both)+
+  theme_get()+
+  labs(title = "Temp and Humidity at 3 PM")+
+  theme(legend.position = "none")
+
+```
+\newpage
+
+```{r, include = TRUE, echo = TRUE}
+Top_10 %>%
+  ggplot(aes(x = Location, y = Humidity9am, fill = Location))+
+  coord_flip()+
+  geom_violin()+
+  ylab("9AM Humidity")+
+  labs(title = "Humidity Distribution by City")+
+  xlab("")
+
+
+
+
+```
+
+
+
+# Closing Remarks
+
+It looks like Temp is the lowest when the humidity is the highest. This seems kinda odd to me. There is definitely a higher temperature and humidity when there is rain today or rain tomorrow.
+
+
+The violin plot did confirm that Mount Ginini had an unusual high distribution of humidity compared to the other cities. The violin plot is much easier to understand compared to the histograms and geom_freqpoly figures.
+
+
+I'm a bit disappointed by how little I was able to understand this data set. Even with out really understanding this data set, I had a great time learning how to use histograms, freqpoly, facet wraps, facet grid, and violin plots. Compared to other languages I studied, R is definitely the best I used when trying to visualize data!
