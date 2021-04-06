@@ -20,9 +20,9 @@
 
 
   <!--radix_placeholder_meta_tags-->
-  <title>Hw4</title>
+  <title>Australian Weather Data</title>
 
-  <meta property="description" itemprop="description" content="A new article created using the Distill format." />
+  <meta property="description" itemprop="description" content="A glimpse into 10 years of Austrailian Weather Data" />
 
 
   <!--  https://schema.org/Article -->
@@ -31,21 +31,21 @@
   <meta name="article:author" content="Peter Sullivan" />
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Hw4" />
+  <meta property="og:title" content="Australian Weather Data" />
   <meta property="og:type" content="article" />
-  <meta property="og:description" content="A new article created using the Distill format." />
+  <meta property="og:description" content="A glimpse into 10 years of Austrailian Weather Data" />
   <meta property="og:locale" content="en_US" />
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary" />
-  <meta property="twitter:title" content="Hw4" />
-  <meta property="twitter:description" content="A new article created using the Distill format." />
+  <meta property="twitter:title" content="Australian Weather Data" />
+  <meta property="twitter:description" content="A glimpse into 10 years of Austrailian Weather Data" />
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output"]}},"value":[{"type":"character","attributes":{},"value":["Hw4"]},{"type":"character","attributes":{},"value":["A new article created using the Distill format.\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Peter Sullivan"]}]}]},{"type":"character","attributes":{},"value":["2021-04-06"]},{"type":"character","attributes":{},"value":["distill::distill_article"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output"]}},"value":[{"type":"character","attributes":{},"value":["Australian Weather Data"]},{"type":"character","attributes":{},"value":["A glimpse into 10 years of Austrailian Weather Data \n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Peter Sullivan"]}]}]},{"type":"character","attributes":{},"value":["2021-04-06"]},{"type":"character","attributes":{},"value":["distill::distill_article"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -1389,7 +1389,7 @@
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Hw4","description":"A new article created using the Distill format.","authors":[{"author":"Peter Sullivan","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-04-06T00:00:00.000-04:00","citationText":"Sullivan, 2021"}
+{"title":"Australian Weather Data","description":"A glimpse into 10 years of Austrailian Weather Data","authors":[{"author":"Peter Sullivan","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-04-06T00:00:00.000-04:00","citationText":"Sullivan, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1399,10 +1399,10 @@
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>Hw4</h1>
+<h1>Australian Weather Data</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>A new article created using the Distill format.</p></p>
+<p><p>A glimpse into 10 years of Austrailian Weather Data</p></p>
 </div>
 
 <div class="d-byline">
@@ -1415,118 +1415,6 @@
 <h1 id="data-description">Data Description</h1>
 <p>This data set was found on Kagle.com. This data has 23 variables and 145,000 measurements. This data set has 10 years of daily weather observations from various locations in Australia. The data was published with the intent of using various weather indicators to predict whether it is raining or will rain the next day.Two columns, rain today and rain tomorrow are used as the target columns. If there was 1mm or more of rain, then that will count as “Yes”, meaning there was rain that day.</p>
 <p>Before I start plotting, lets take a look at the variables we are working with. To do this, I will use the str function, sapply with sum is.na, and length with unique to count the locations.</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">Weather_Data</span><span class="op">)</span>
-</code></pre>
-</div>
-<pre><code>spec_tbl_df [145,460 x 23] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
- $ Date         : Date[1:145460], format: &quot;2008-12-01&quot; ...
- $ Location     : chr [1:145460] &quot;Albury&quot; &quot;Albury&quot; &quot;Albury&quot; &quot;Albury&quot; ...
- $ MinTemp      : num [1:145460] 13.4 7.4 12.9 9.2 17.5 14.6 14.3 7.7 9.7 13.1 ...
- $ MaxTemp      : num [1:145460] 22.9 25.1 25.7 28 32.3 29.7 25 26.7 31.9 30.1 ...
- $ Rainfall     : num [1:145460] 0.6 0 0 0 1 0.2 0 0 0 1.4 ...
- $ Evaporation  : logi [1:145460] NA NA NA NA NA NA ...
- $ Sunshine     : logi [1:145460] NA NA NA NA NA NA ...
- $ WindGustDir  : chr [1:145460] &quot;W&quot; &quot;WNW&quot; &quot;WSW&quot; &quot;NE&quot; ...
- $ WindGustSpeed: num [1:145460] 44 44 46 24 41 56 50 35 80 28 ...
- $ WindDir9am   : chr [1:145460] &quot;W&quot; &quot;NNW&quot; &quot;W&quot; &quot;SE&quot; ...
- $ WindDir3pm   : chr [1:145460] &quot;WNW&quot; &quot;WSW&quot; &quot;WSW&quot; &quot;E&quot; ...
- $ WindSpeed9am : num [1:145460] 20 4 19 11 7 19 20 6 7 15 ...
- $ WindSpeed3pm : num [1:145460] 24 22 26 9 20 24 24 17 28 11 ...
- $ Humidity9am  : num [1:145460] 71 44 38 45 82 55 49 48 42 58 ...
- $ Humidity3pm  : num [1:145460] 22 25 30 16 33 23 19 19 9 27 ...
- $ Pressure9am  : num [1:145460] 1008 1011 1008 1018 1011 ...
- $ Pressure3pm  : num [1:145460] 1007 1008 1009 1013 1006 ...
- $ Cloud9am     : num [1:145460] 8 NA NA NA 7 NA 1 NA NA NA ...
- $ Cloud3pm     : num [1:145460] NA NA 2 NA 8 NA NA NA NA NA ...
- $ Temp9am      : num [1:145460] 16.9 17.2 21 18.1 17.8 20.6 18.1 16.3 18.3 20.1 ...
- $ Temp3pm      : num [1:145460] 21.8 24.3 23.2 26.5 29.7 28.9 24.6 25.5 30.2 28.2 ...
- $ RainToday    : chr [1:145460] &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
- $ RainTomorrow : chr [1:145460] &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
- - attr(*, &quot;problems&quot;)= tibble [153,782 x 5] (S3: tbl_df/tbl/data.frame)
-  ..$ row     : int [1:153782] 6050 6050 6051 6051 6052 6052 6053 6053 6054 6054 ...
-  ..$ col     : chr [1:153782] &quot;Evaporation&quot; &quot;Sunshine&quot; &quot;Evaporation&quot; &quot;Sunshine&quot; ...
-  ..$ expected: chr [1:153782] &quot;1/0/T/F/TRUE/FALSE&quot; &quot;1/0/T/F/TRUE/FALSE&quot; &quot;1/0/T/F/TRUE/FALSE&quot; &quot;1/0/T/F/TRUE/FALSE&quot; ...
-  ..$ actual  : chr [1:153782] &quot;12&quot; &quot;12.3&quot; &quot;14.8&quot; &quot;13&quot; ...
-  ..$ file    : chr [1:153782] &quot;&#39;weatherAUS.csv&#39;&quot; &quot;&#39;weatherAUS.csv&#39;&quot; &quot;&#39;weatherAUS.csv&#39;&quot; &quot;&#39;weatherAUS.csv&#39;&quot; ...
- - attr(*, &quot;spec&quot;)=
-  .. cols(
-  ..   Date = col_date(format = &quot;&quot;),
-  ..   Location = col_character(),
-  ..   MinTemp = col_double(),
-  ..   MaxTemp = col_double(),
-  ..   Rainfall = col_double(),
-  ..   Evaporation = col_logical(),
-  ..   Sunshine = col_logical(),
-  ..   WindGustDir = col_character(),
-  ..   WindGustSpeed = col_double(),
-  ..   WindDir9am = col_character(),
-  ..   WindDir3pm = col_character(),
-  ..   WindSpeed9am = col_double(),
-  ..   WindSpeed3pm = col_double(),
-  ..   Humidity9am = col_double(),
-  ..   Humidity3pm = col_double(),
-  ..   Pressure9am = col_double(),
-  ..   Pressure3pm = col_double(),
-  ..   Cloud9am = col_double(),
-  ..   Cloud3pm = col_double(),
-  ..   Temp9am = col_double(),
-  ..   Temp3pm = col_double(),
-  ..   RainToday = col_character(),
-  ..   RainTomorrow = col_character()
-  .. )</code></pre>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">Weather_Data</span><span class="op">$</span><span class="va">Location</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span>decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-</code></pre>
-</div>
-<pre><code>
-        Canberra           Sydney         Adelaide         Brisbane 
-            3436             3344             3193             3193 
-          Darwin           Hobart        Melbourne            Perth 
-            3193             3193             3193             3193 
-          Albany           Albury     AliceSprings         Ballarat 
-            3040             3040             3040             3040 
-         Bendigo           Cairns        GoldCoast       Launceston 
-            3040             3040             3040             3040 
-    MountGambier      MountGinini       Townsville       Wollongong 
-            3040             3040             3040             3040 
-       Newcastle          Penrith      Tuggeranong    BadgerysCreek 
-            3039             3039             3039             3009 
-           Cobar     CoffsHarbour         Dartmoor MelbourneAirport 
-            3009             3009             3009             3009 
-         Mildura            Moree    NorfolkIsland        Nuriootpa 
-            3009             3009             3009             3009 
-      PearceRAAF     PerthAirport         Portland         Richmond 
-            3009             3009             3009             3009 
-            Sale    SydneyAirport       WaggaWagga         Watsonia 
-            3009             3009             3009             3009 
-     Williamtown      Witchcliffe          Woomera          Walpole 
-            3009             3009             3009             3006 
-       NorahHead       SalmonGums        Katherine             Nhil 
-            3004             3001             1578             1578 
-           Uluru 
-            1578 </code></pre>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">Weather_Data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">count</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">count</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-</code></pre>
-</div>
-<pre><code>         Date      Location       MinTemp       MaxTemp      Rainfall 
-            0             0          1485          1261          3261 
-  Evaporation      Sunshine   WindGustDir WindGustSpeed    WindDir9am 
-       143636        142771         10326         10263         10566 
-   WindDir3pm  WindSpeed9am  WindSpeed3pm   Humidity9am   Humidity3pm 
-         4228          1767          3062          2654          4507 
-  Pressure9am   Pressure3pm      Cloud9am      Cloud3pm       Temp9am 
-        15065         15028         55888         59358          1767 
-      Temp3pm     RainToday  RainTomorrow 
-         3609          3261          3267 </code></pre>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">Weather_Data</span><span class="op">$</span><span class="va">Location</span><span class="op">)</span><span class="op">)</span>
-</code></pre>
-</div>
-<pre><code>[1] 49</code></pre>
-</div>
 <h2 id="results">Results:</h2>
 <p>It looks like we have a date column, a categorical column for locations, and continuous number type columns. It seems that the spread is pretty even for per location, With the largest amount of observations Canberra at 3436 and the lowest in Katherine, Nhil and Uluru at 1578. There are 49 cites in this data set. Also there are plenty of NA’s in this data set, so I’ll keep that in mind while thinking about which variables will help us predict rainfall in Australia. Due to the large amount of continuous variables, I will use histograms later on in the report.</p>
 <p>Before we try the histograms, lets plot the top 10 cities by number of observations in a bar chart. </p>

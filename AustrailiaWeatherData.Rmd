@@ -1,7 +1,7 @@
 ---
-title: "Hw4"
+title: "Australian Weather Data"
 description: |
-  A new article created using the Distill format.
+  A glimpse into 10 years of Austrailian Weather Data 
 author:
   - name: Peter Sullivan
    
@@ -34,7 +34,7 @@ Before I start plotting, lets take a look at the variables we are working with. 
 
 
 
-```{r echo=TRUE}
+```{r , include = FALSE}
 str(Weather_Data)
 table(Weather_Data$Location) %>% sort(decreasing = TRUE)
 sapply(Weather_Data, function(count) sum(is.na(count)))
