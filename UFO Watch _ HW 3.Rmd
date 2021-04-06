@@ -1,0 +1,273 @@
+---
+title: "UFO Search"
+description: |
+  This is a quick glimpse into the world of UFO's.
+author:
+  - name: Peter Sullivan
+    
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(ggmap)
+library(lubridate)
+
+
+
+UFO_data <- read_csv("complete.csv", na = c("", "NA"))
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+dim(UFO_data)
+head(UFO_data)
+
+
+
+```
+
+
+# Data Description:
+
+
+This Data is published by the NUFORC, the National UFO Reporting Center. This data set was published roughly one year ago. When looking at the UFO data set, there are `r nrow(UFO_data)` observations, and `r ncol(UFO_data)` variables. This data set was posted on kagle.com.
+
+Here are the column names: `r colnames(UFO_data)`
+
+
+Lets look into the data. When I read in the data set using read.csv, I used na.strings = "" to replace any blanks with NA. The first step thing I want to konw is how many blanks for each variable. To find this out I used the sapply, function, sum, and is.na to sum the number of NA's in the data.  I also plan to str() function, to see the data types of the variables. Lets see our results:
+
+## Method
+
+
+
+```{r include = TRUE}
+sapply(UFO_data, function(Count) sum(is.na(Count)))
+```
+\newpage
+
+
+
+```{r include = TRUE, echo=TRUE}
+US_data <- UFO_data %>%
+  filter(country == "us") 
+
+
+US_data %>% 
+  select(state) %>%
+table() %>%
+  sort(decreasing =TRUE)
+
+
+str(US_data)
+
+```
+There is a lot to look into. First, It seems like the country column has the most amount of NA's. 12,757 out of the 89,000 data points. DateTime is consistent with 0 NA's. I filtered the data down to US DATA, and created a table showing the count per state of UFO sighting. From the table, California has the largest amount of sightings (9575), so I am going to filter further into California.
+
+When looking at the result of the str() function, I've noticed the the latitude column is a character type. This is going to cause trouble when trying to plot the location of each sighting. I'm going to use mutate to create a new column that is numeric. After I filter down to California, I will also create a table of the count per shape per sighting in California.
+\newpage
+
+```{r include =TRUE}
+library(knitr)
+US_data <- US_data %>%
+  mutate(new_latitude = as.numeric(latitude))
+
+
+California_data <- US_data %>%
+  filter(state == "ca")
+
+
+
+California_data %>%
+  select(shape)%>%
+  table()%>%
+  sort(decreasing = TRUE)
+  
+
+
+
+
+```
+
+
+It Looks like in California, The shape most seen is the light and circle, with triangle fire ball and disk. 
+\newpage
+
+## Visuals
+
+Now, lets create some visuals. Since there are so many shapes, let's use Count and Slice to grab and plot the top 5 shapes in California.
+
+```{r include = TRUE}
+top_5_shapes <- California_data %>%
+  count(shape, sort = TRUE) %>%
+  slice(1:5)
+top_5_shapes <- rename(top_5_shapes, Total_Count = n)
+
+
+
+top_5_shapes %>%
+ggplot()+
+geom_col(aes(x = shape, y =Total_Count, fill = shape), show.legend = FALSE )+
+  geom_text(aes(x = shape, y =Total_Count, label = Total_Count), vjust = 3)+
+  theme_classic()+
+  labs(title = "Sighting by Shape in California")
+ 
+
+```
+  Since the data was already counted using the count function, I had to use geom_col instead of geom_bar to plot the visual.
+
+\newpage
+
+# Mapping
+Now lets look into the positional data, specifically the latitude and longitude columns. As I mentioned before, I had to create a new column named "New_latitude" that was numeric instead of character type that was provided.
+
+To plot this locational data, I plan to use ggmpa. To use ggmap, I had to create a free account with google cloud. I then had to request a key to the static map api. This allowed me to get the map that I would be plotting the location data onto. 
+
+```{r include = TRUE, fig.width=5, fig.height=5}
+register_google(key = "AIzaSyDZ5IQIDSQKU7lZmZRqpwwtR-Zx7Dc60dc")
+map <- get_googlemap(center = c(lon = -119.4179, lat = 36.7783),
+                    zoom = 6, scale = 2,
+                    maptype ='roadmap',
+                    color = "color")
+
+ggmap(map) + geom_point(data = US_data, aes(x = longitude, y = new_latitude ), size = .2) 
+
+  
+
+```
+
+From a Quick glimpse, most of the sightings are from San Franciso, LA, and San Diego. Lets see exactly how many sightings there are from those specific cities. To acomplish this, I will do the same method as above, create a dataframe of the top 5 citys by count. 
+
+\newpage
+
+
+```{r include = TRUE}
+top_5_citys <- California_data %>%
+  count(city, sort = TRUE) %>%
+  slice(1:5)
+top_5_citys <- rename(top_5_citys, Total_Count = n)
+
+
+
+top_5_citys %>%
+ggplot()+
+geom_col(aes(x = city, y =Total_Count, fill = city), show.legend = FALSE)+
+  geom_text(aes(x = city, y = Total_Count, label = Total_Count), vjust = 3)+
+  theme_get()+
+  labs(title = "Sighting by City in California")
+
+
+
+```
+
+Surprisingly It looks like Sacramento actually has more sightings from San Francisco. LA and San Diego Still have the most sightings by far. 
+
+\newpage
+
+# Timeline
+
+The last item I would like to look into is the datetime column. I'm curious to see if I can find out if there is a specific time of the year when more people report UFO sightings. Perhaps there's a season where Californians will see more UFO's than others. 
+
+From a quick glance, it looks like the datetime column is a char type, so I'll first have to change it to a datetime. I then plan to add new columns for for month, day and year.
+
+
+
+```{r include =TRUE}
+
+
+California_data <- California_data %>%
+  mutate(new_datetime = as.Date(datetime,format = "%m/%d/%Y"))
+
+head(select(California_data,new_datetime, datetime))
+
+
+
+```
+
+The New datetime looks like it worked based off the first six rows. Lets just check the tail as well just in-case.
+
+```{r include=TRUE}
+
+tail(select(California_data,new_datetime, datetime))
+
+
+```
+
+
+
+
+ OK. Everything looks fine. Now I am going to create a month column from the new_datetime column.
+ 
+ 
+
+
+```{r include = TRUE}
+California_data <- California_data %>%
+  mutate(month_column = month(new_datetime),
+         year_column = year(new_datetime),
+         day_column = day(new_datetime))
+head(select(California_data,datetime, new_datetime, month_column, year_column, day_column))
+
+California_data <- California_data %>%
+  mutate(month = case_when(
+    month_column == 1 ~ "Jan",
+    month_column == 2 ~ "Feb",
+    month_column == 3 ~ "Mar",
+    month_column == 4 ~ "Apr",
+    month_column == 5 ~ "May",
+    month_column == 6 ~ "Jun",
+    month_column == 7 ~ "Jul",
+    month_column == 8 ~ "Aug",
+    month_column == 9 ~ "Sep",
+    month_column == 10 ~ "Oct",
+    month_column == 11 ~ "Nov",
+    month_column == 12 ~ "Dec"
+  ))
+
+
+Month_data <- California_data %>%
+  count(month) 
+
+Month_data <- rename(Month_data, Sightings = n)
+Month_data
+Month_data$month <- factor(Month_data$month, levels = c("Jan", "Feb", "Mar", "Apr","May",
+                                                        "Jun","Jul","Aug","Sep","Oct",
+                                                        "Nov","Dec"))
+
+
+
+Month_data%>%
+  ggplot()+
+  geom_col(aes(x = month, y = Sightings, fill = month), show.legend = FALSE)+  
+  geom_text(aes(x = month, y =Sightings, label = Sightings), vjust = 3)+
+  theme_classic()+
+  labs(title = "Sighting by Month in California")
+
+
+
+```
+ 
+ 
+# Results
+
+
+ Alright. There were a few steps that I had to go through in order to create the Sightings by Month visual. I first used mutate to create month, day, and year variables from the new_datetime column. Then I used the case_when and mutate to change the months from a number to a string (Aug, Sep, etc...). I then created an object using count, called month data. I did this because as of now, I am unaware how to use geom text with geom_bar. Geom_text with geom_col works fine. Since the months are now characters, when I plot them, they will be out of order. To solve this problem, I used factor to set up levels in the month column. After that, the data was ready to plot.
+ 
+ 
+ 
+ 
+Based on this data set, if one was looking to see a UFO, I would recommend heading to San Diego, LA, or Sacramento during the Summer! If I was going to look deeper into this data set, I would look closer into the time of when these UFO's are spotted. 
+ 
+```
+
+Distill is a publication format for scientific and technical writing, native to the web. 
+
+Learn more about using Distill for R Markdown at <https://rstudio.github.io/distill>.
+
+
+
+
+
