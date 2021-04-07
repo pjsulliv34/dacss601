@@ -8,7 +8,7 @@ author:
 date: "`r Sys.Date()`"
 output: distill::distill_article
   
-theme: jekyll-theme-time-machine
+theme: Time machine
 ---
 
 ```{r setup, include=FALSE}
