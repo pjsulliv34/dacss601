@@ -1,0 +1,366 @@
+---
+title: "Stroke Data"
+description: |
+  HW 5. This data set focuses on certain health factors that could be used to predict whether someone experiences a stroke.
+author:
+  - name: Peter Sullivan
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(ggExtra)
+library(gridExtra)
+library(knitr)
+
+stroke_data <- read_csv("healthcare-dataset-stroke-data.csv", na = c("", "NA"))
+
+
+
+```
+# Data Description
+
+This data set was obtained via Kagle.com. This data set is used to see if one can predict whether a patient is likely to experience a stroke based on certain predictors such as age, gender, smoking status, and whether someone has hypertension or heart disease. 
+
+This data set will work well for looking at bivariate relations ships.
+
+The first step is to look at what types the variables are and how many N/A's we have.
+
+```{r  results='hide'}
+str(stroke_data)
+sapply(stroke_data, function(count) sum(is.na(count)))
+#view(stroke_data)
+dim(stroke_data)
+unique(stroke_data$work_type)
+unique(stroke_data$smoking_status)
+unique(stroke_data$Residence_type)
+unique(stroke_data$ever_married)
+unique(stroke_data$gender)
+```
+# Data Types
+
+After a quick glimpse of the data types str() function, I noticed that the bmi variable that should be numeric is a character type. 
+
+
+Lets see if there are any NA's/Blanks using the sapply and count.
+
+```{r include = TRUE}
+
+
+table <-sapply(stroke_data, function(count) sum(is.na(count)))
+kable(table, caption = "Blanks by Variable")
+
+```
+From the table above, it seems we don't have NA's in this data set. This is surprising. I decided to take a closer look at the data itself, and it seems that there are blanks, but instead of leaving the observation blank, the user inputted "N/A". I'm going to have to change the BMI variable to a numeric type.
+
+Looking at other points, if there was not data, they wrote "Unknown" instead of leaving it blank. There are 5110 observations and 12 variables. Here are the variables: `r colnames(stroke_data)`. 
+
+
+
+# Method
+
+
+The target variable is stroke, this is comprised of "0" for not having a stroke and "1" for having a stroke. My first plan is to pick multiple variables and perform facet wraps with stroke. If I find variables that might show a correlation with stroke, I will then use a facet grid with stroke and those other variables. 
+
+
+```{r , include = TRUE, echo =TRUE}
+
+new_labels <- c("0" = "No Stroke", "1" = "Stroke")
+
+hyp_label <- c("0"= "No Hypertension", "1" = "Hypertension")
+
+stroke_data <- stroke_data %>%
+  mutate(Experienced_Stroke = case_when(
+    stroke == 1 ~ "Experienced Stroke",
+    stroke == 0 ~ "No Stroke"
+  ))
+
+stroke_data <- stroke_data %>% mutate(
+new_bmi = as.numeric(bmi))
+
+stroke_data %>%
+  select(bmi,new_bmi)%>%
+  head%>%
+  kable(caption = "Old vs New BMI Variables")
+
+```
+
+The new bmi variable seems all set! Lets start creating some plots.
+\newpage
+
+# Visuals
+
+The first Plot I'm going to create is a facet wrap based on whether a person experienced a stroke, while looking at the geom_point/geom_smooth of age vs glucose level.
+
+
+```{r , include = TRUE, echo =TRUE}
+
+
+
+
+stroke_data %>%
+  ggplot()+
+  geom_smooth(aes(x = age, y = avg_glucose_level))+
+  geom_point(aes(x = age, y = avg_glucose_level))+
+  facet_wrap(~stroke, labeller = labeller(stroke = new_labels))+
+  labs(title =  "AGE vs. Glucose Level",
+       subtitle = "Split into two groups: Stroke and No Stroke",
+       caption = "Figure 1.")
+
+
+
+```
+
+First off there are too many points in the no stroke graph, so we can't see the geom smooth. It does look like that for people who do experience a stroke, most are 40 or older and the glucose level has steady increase with age, but sloops down as gets older than 70. This does go with what I would expect. One is more likely to have a stroke with higher glucose levels, but once you get past an age (which seems is 70), there may be other more pressing matters that would give someone a stroke. This could be as simple as just getting old.
+
+The next visual is the age vs glucose level, but instead of a facet, I used fill based on someone experiencing a stroke.
+
+
+
+
+
+```{r include=TRUE}
+
+stroke_data %>%
+  ggplot()+
+  geom_smooth(aes(x = age, y = avg_glucose_level, fill = Experienced_Stroke))+
+  labs(title = "AGE vs. Glucose Level",
+         subtitle = "Split into two groups: Stroke and No Stroke",
+       caption = "Figure 2.")
+
+
+```
+
+I found this visual much easier to understand. There is less variation in someone who doesn't experience a stroke based on their avg glucose levels. On the other hand, if you have a stroke, there is much variation based on glucose levels, and as you get older there will be less variation, and higher glucose levels compared to people who don't experience a stroke. There is a point where the no stroke line and experience stroke line cross. This could be an age where doctors may reccomend patients to get checked for certain stroke indicators.
+
+
+
+I thought it would be useful to compare the numeric variable against each other, but also using a facet wrap based on whether someone experienced a stroke. To accomplish this, I used a pivot longer to create one column, Stroke Factors, and their corresponding values. To get an idea of their distributions, I used boxplots for each variable.
+
+
+
+
+
+```{r include=TRUE}
+
+
+
+stroke_data %>%
+  select(id, stroke, age, avg_glucose_level, new_bmi)%>%
+  pivot_longer(!c(id, stroke), names_to = "Stroke_Fac")%>%
+  ggplot(aes(x = Stroke_Fac, y = value, fill = Stroke_Fac))+
+ # geom_violin()+
+    facet_wrap(~stroke, labeller = labeller(stroke = new_labels))+
+    labs(x = "Stroke Factors",
+          title = "Stroke Factor Distribution",
+         subtitle = "Split into two groups: Stroke and No Stroke",
+       caption = "Figure 3.")+
+    theme(axis.text.x = element_blank())+
+  geom_boxplot()+
+  ylab("Frequency")
+    
+```
+
+This visual is very easy to understand. If someone has a stroke, they are more likely to be older in age, glucose levels will much more likely be higher, and the bmi distribution will likely be less spread out when compared to someone who doesn't have a stroke. 
+
+
+I know want to take a closer look at the correlation between age and gender. To do this, I will use a geom_histogram of age, and a fill based on gender.
+
+
+
+
+
+```{r , include =TRUE}
+
+stroke_data %>%
+  ggplot() +
+  geom_histogram(aes(x = age, y = ..density.., fill = gender))+
+   labs(title = "AGE Distribution by Gender",
+       caption = "Figure 4.")
+
+```
+
+```{r include=TRUE, fig.width=5, fig.align ='left'}
+
+table(stroke_data$gender)%>%
+  kable(caption = "Gender Distribution")
+  
+
+```
+
+```{r include =TRUE, fig.width=7, fig.height=3}
+
+
+stroke_data %>%
+  filter(gender != "Other")%>%
+  ggplot() +
+  geom_histogram(aes(x = age, y = ..density.., fill = gender))+
+   labs(title = "AGE Distribution by Gender",
+         subtitle = "Filtered out Other Category, due to lack of observations",
+       caption = "Figure 5.")
+
+
+
+```
+
+
+\newpage
+
+
+I changed the size of the third plot to allow it to fit on the screen. I attempted to left align the kable table as well, but that did not work.
+
+I used geom_histogram and density as the y variable.   It seems pretty hard to see the distribution of male and female due to the Other category. This is due to their being only one "Other" observation and using density as my y variable. The distribution of observations in the gender variable can be seen in the table. To get a better understanding of the distribution, I filtered out the other observation and then plotted the visual again. This plot is easy to understand but doesn't really help with our goal of predicting a stroke. 
+
+
+# More Visuals!
+
+It seems like a long process to really understand the correlation between these variables. In future homeworks, I think I may try to create a correlation matrix. I'm not sure how to do that at the moment. Instead, I'm going to create multiple histograms, boxplots, violin plots, and facet wraps/grids to see compare the distributions between someone experiencing a stroke and not.
+
+
+
+```{r include = TRUE, fig.width= 7, fig.height=3}
+
+
+stroke_data %>%
+  ggplot() +
+  geom_histogram(aes(x = age, y = ..density.. , fill = smoking_status))+
+   labs(title = "AGE Distribution by Smoking Status",
+       caption = "Figure 6.")
+
+stroke_data %>%
+  ggplot()+
+  geom_histogram(aes(x = age, y = ..density.., fill = smoking_status))+
+  facet_wrap(~stroke, labeller = labeller(stroke = new_labels))+
+  labs(title = "AGE Distribution by Smoking Status",
+      subtitle = "Split into two groups: Stroke and No Stroke",
+       caption = "Figure 7.")
+
+
+
+stroke_data %>%
+  ggplot()+
+  geom_histogram(aes(x = new_bmi, y = ..density.., fill = smoking_status))+
+  facet_wrap(~stroke, labeller = labeller(stroke = new_labels))+
+  labs(title = "BMI Distribution by Smoking Status",
+      subtitle = "Split into two groups: Stroke and No Stroke",
+       caption = "Figure 8.")
+
+stroke_data %>%
+  ggplot()+
+  geom_histogram(aes(x = avg_glucose_level, y = ..density.., fill = smoking_status))+
+  facet_wrap(~stroke, labeller = labeller(stroke = new_labels))+
+  labs(title = "Glucose Distribution by Smoking Status",
+      subtitle = "Split into two groups: Stroke and No Stroke",
+       caption = "Figure 9.")
+```
+
+
+# Results
+
+Lots and lots of information to go through! Since I had so many visuals, I added captions using labs in ggplot. 
+
+Figure 6 showed a pretty even distribution by age when looking at the smoking status. People who smoke are mostly over 20, and the highest distribution is in 40-60.
+
+In Figure 7, it looks like most people are over 40 who have a stroke. The smoking distribution looks pretty even.
+
+In Figure 8, it looks like people who have a stroke have a more narrow distribution by bmi. I didn't see a correlation based on smoking status. 
+
+In figure 9, There was a higher distribution of people with higher glucose levels if they experienced a stroke.
+
+
+
+
+```{r include = TRUE, fig.width= 7, fig.height=4}
+
+stroke_data %>%
+  ggplot()+
+  geom_histogram(aes(x = avg_glucose_level, y = ..density.., fill = smoking_status))+
+  facet_grid(hypertension~stroke, labeller = labeller(stroke = new_labels, hypertension = hyp_label))+
+  labs(title = "Glucose Distribution by Smoking Status",
+      subtitle = "Split into Four groups: Stroke, No Stroke, Hypertension, No Hypertension",
+       caption = "Figure 10.")
+
+stroke_data %>%
+  ggplot()+
+  geom_histogram(aes(x = age, y = ..density.., fill = work_type))+
+  facet_grid(hypertension~stroke, labeller = labeller(stroke = new_labels, hypertension = hyp_label))+
+  labs(title = "Age Distribution by Work type",
+      subtitle = "Split into Four groups: Stroke, No Stroke, Hypertension, No Hypertension",
+       caption = "Figure 11.")
+
+
+```
+
+
+
+#  Results Continued
+
+
+
+In Figure 10, this one was a little tough to under stand. It could be too much info. If you had hypertension and a stroke, there was a higher distribution of people who smoke or formerly smoked.
+
+
+In Figure 11, there was a very high proportion of never worked in the no stroke and No hypertension group. It might be the healthiest option to never work.... 
+
+
+
+
+
+
+\newpage
+```{r include = TRUE, fig.width= 7, fig.height= 4}
+
+
+
+stroke_data %>%
+  ggplot(aes(x = smoking_status, y = new_bmi))+
+  geom_boxplot( FUN = mean)+
+facet_grid(stroke~Residence_type, labeller = labeller(stroke = new_labels))+
+  coord_flip()+
+  labs(title = "Smoking Status vs. BMI",
+      subtitle = "Split into Four groups: Stroke, No Stroke, Rural, Urban",
+       caption = "Figure 12.")
+
+
+stroke_data %>%
+  ggplot(aes(x = avg_glucose_level, smoking_status))+
+  geom_violin(FUN = mean)+
+  facet_grid(stroke ~hypertension, labeller = labeller(stroke = new_labels, hypertension = hyp_label))+
+  labs(title = "Glucose Level vs. Smoking Status",
+      subtitle = "Split into Four groups: Stroke, No Stroke, Hypertension, No Hypertension",
+       caption = "Figure 13.")
+
+
+
+
+
+
+```
+
+
+
+# Conclusion
+
+Figure 12 and 13 are useful in getting a quick understanding of variables distributions based on their relationships with other variables. It looks like the distributions of the box plots in Figure 12 are smaller for the individuals who experienced a stroke based on bmi. That is to be expected. 
+
+It also looks like the avg glucose level distribution for individuals who experienced a stroke or hypertension are more spread out then those who don't experience those factors.
+
+
+I went through a lot of information! I would now say that glucose level and hypertension are good indicators of ones probability of a stroke. I would look at those first then I would go to other variables such as age and perhaps smoking status as well.
+
+I would love to learn how to calculate ones probability of a stroke based on this information in the future!```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Distill is a publication format for scientific and technical writing, native to the web. 
+
+Learn more about using Distill for R Markdown at <https://rstudio.github.io/distill>.
+
+
+
+
+
