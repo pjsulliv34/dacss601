@@ -4,7 +4,7 @@ Currently under construction......
 
 ### Projects
 
-[HW2](https://pjsulliv34.github.io/dacss601/HW1+2/Hw2DiabetesData.html) \newpage
+[HW2](https://pjsulliv34.github.io/dacss601/HW1+2/Hw2DiabetesData.html) <br />
 [HW3](https://pjsulliv34.github.io/dacss601/HW3/UFOwatchHW3.html)
 [HW 4](https://pjsulliv34.github.io/dacss601/HW4/AustrailiaWeatherData.html)
 [HW 5](https://pjsulliv34.github.io/dacss601/HW5/HW5_AustralianDATA.html)
