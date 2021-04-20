@@ -4,7 +4,12 @@ description: |
   HW 5. This data set focuses on certain health factors that could be used to predict whether someone experiences a stroke.
 author:
   - name: Peter Sullivan
-output: distill::distill_article
+output_dir: "_site"
+output: 
+distill::distill_article:
+  prettydoc::html_pretty:
+    theme: cayman
+
 
 ---
 
@@ -17,7 +22,7 @@ library(dplyr)
 library(ggExtra)
 library(gridExtra)
 library(knitr)
-
+library(prettydoc)
 stroke_data <- read_csv("healthcare-dataset-stroke-data.csv", na = c("", "NA"))
 
 
@@ -59,7 +64,6 @@ kable(table, caption = "Blanks by Variable")
 From the table above, it seems we don't have NA's in this data set. This is surprising. I decided to take a closer look at the data itself, and it seems that there are blanks, but instead of leaving the observation blank, the user inputted "N/A". I'm going to have to change the BMI variable to a numeric type.
 
 Looking at other points, if there was not data, they wrote "Unknown" instead of leaving it blank. There are 5110 observations and 12 variables. Here are the variables: `r colnames(stroke_data)`. 
-
 
 
 # Method
