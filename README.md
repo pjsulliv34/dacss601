@@ -1,9 +1,9 @@
 # Welcome to my GitHub Page
 
-<em>Currently under construction</em>......
-
 ### Projects
 #### Here is a list of Projects from DACS 601
+
+These projects are from the Intro to Data Science Course offered at Umass Amherst. The following projects are coded primarily in R.
 
 [Diabetes Data - Hw 2](https://pjsulliv34.github.io/dacss601/HW1+2/Hw2DiabetesData.html) <br />
 [UFO DATA - HW3](https://pjsulliv34.github.io/dacss601/HW3/UFOwatchHW3.html) <br />
