@@ -1,9 +1,11 @@
 ---
 title: "Final Project"
 author: "Peter Sullivan"
-date: "4/27/2021"
-output: html_document
-theme: cayman
+date: "`r Sys.Date()`"
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
+
 
 ---
 
