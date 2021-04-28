@@ -1,0 +1,70 @@
+---
+title: "HW 2: Diabetes"
+description: |
+ This document looks into certain factors that may contribute to someone developing diabetes.
+author:
+  - name: Peter Sullivan 
+   
+date: "`r Sys.Date()`"
+output: distill::distill_article
+theme: sandstone
+---
+
+```{r setup, include= TRUE}
+library(tidyverse)
+
+diabetes_data <- read.csv("diabetes.csv", sep = ',')
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+head(diabetes_data)
+colnames(diabetes_data)
+dim(diabetes_data)
+```
+
+
+#
+When looking at the Diabetes data set, there are `r nrow(diabetes_data)` observations, and `r ncol(diabetes_data)` variables. This data set was posted on kagle.com as a machine learning exercise, to see if someone can predict whether the patient has diabetes based on certain features. The target column, "Outcome", states whether someone has diabetes; 1 for diabetes and 0 for not having diabetes.
+
+Here are the column names: `r colnames(diabetes_data)`
+
+```{r , include=TRUE}
+diabetes_data %>%
+ggplot() +
+  geom_point(mapping = aes(x = Age, y = BloodPressure))+
+  geom_smooth(mapping = aes(x = Age, y = BloodPressure))
+
+
+```
+
+
+#
+Here is an attempt at using a Facet wrap, specifically looking at the number of pregnancies per patient:
+
+
+```{r, include = TRUE}
+diabetes_data %>%
+ggplot() +
+  geom_point(mapping = aes(x = Age, y = BloodPressure)) +
+  geom_smooth(mapping = aes(x = Age, BloodPressure)) +
+  facet_wrap( ~ Pregnancies , nrow = 2)
+```
+
+#
+This is another example of using a Facet wrap but instead of looking at pregnancies, we are looking at the Diabetes Outcome.
+
+```{r, include = TRUE}
+
+ggplot(data = diabetes_data) +
+  geom_point(mapping = aes(x = Age, y = BloodPressure)) +
+  geom_smooth(mapping = aes(x = Age, BloodPressure)) +
+  facet_wrap( ~ Outcome , nrow = 2)
+```
+
+
+Distill is a publication format for scientific and technical writing, native to the web. 
+
+Learn more about using Distill for R Markdown at <https://rstudio.github.io/distill>.
+
+
+
+
+
