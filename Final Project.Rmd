@@ -3,7 +3,8 @@ title: "Final Project"
 author: "Peter Sullivan"
 date: "4/27/2021"
 output: html_document
-runtime: shiny
+theme: cayman
+
 ---
 
 
@@ -19,6 +20,7 @@ library(lubridate)
 
 
 # Introduction
+
 
 Covid has hit the world in many strange and unexpected ways. Recently the stock market has been very volatile. Gamestop stock is rising up to 400 a share from previous shares below 10 dollars. A failing video game store, that sells hard copy video games saw prices increase exponently due to a Reddit group. There are stories about college students making millions of dollars from investing using apps like Robinhood. 
 
@@ -51,44 +53,7 @@ tail(data)
 
 
 
-```{r echo=TRUE}
-library(shiny)
-ui <- fluidPage(
-    titlePanel("Stock Prices"),
-    sidebarLayout(
-        sidebarPanel(
-            selectInput("stock", "Stock Symbol:",
-                        choices = unique(data$symbol)),
-            hr(),
-            helpText("Pick a Stock from the Predetermined List")
-        ),
-        #create a spot for the plot
-        mainPanel(
-            plotOutput("StockPlot")
-        )
-    )
-)
 
-
-server <- function(input, output){
-    output$StockPlot <- renderPlot({
-        data %>%
-            filter(symbol == input$stock)%>%
-            ggplot()+
-            geom_line(aes(x = date, y = adjusted))
-    })
-}
-  
-
-# Run the application 
-shinyApp(ui = ui, server = server)
-
-
-
-
-
-
-```
 
 # Updating Dates
 
