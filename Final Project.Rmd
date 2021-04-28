@@ -6,14 +6,7 @@ output: html_document
 runtime: shiny
 ---
 
----
-title: "Gathering DATA"
-author: "Peter Sullivan"
-date: "4/1/2021"
-output: html_document
-runtime: shiny
 
----
 
 ```{r setup, include=FALSE, echo=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
