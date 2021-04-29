@@ -1,4 +1,4 @@
-# <span style = "color:blue;">Welcome to my GitHub Page</span>
+# <span style = "color:green;">Welcome to my GitHub Page</span>
 
 ### Projects
 #### Here is a list of Projects from DACS 601
