@@ -23,8 +23,7 @@ library(lubridate)
 
 # Introduction
 
-
-Covid has hit the world in many strange and unexpected ways. Recently the stock market has been very volatile. Gamestop stock is rising up to 400 a share from previous shares below 10 dollars. A failing video game store, that sells hard copy video games saw prices increase exponently due to a Reddit group. There are stories about college students making millions of dollars from investing using apps like Robinhood. 
+Covid has hit the world in many strange and unexpected ways. Recently the stock market has been very volatile. Gamestop stock is rising up to 400 a share from previous shares  below 10 dollars. A failing video game store, that sells hard copy video games saw prices increase exponently due to a Reddit group. There are stories about college students making millions of dollars from investing using apps like Robinhood. 
 
 Due to the ease of entering the market through free online platforms, there's a whole new market of investors that are adding a new and unexpected force to the market. 
 
@@ -38,6 +37,7 @@ Instead of using pre gathered data, I've decided to gather the data my self. To 
 I've set up a vector named stocks of multiple stocks with with very different listed prices, such as Google with a current price of 2300 and MTNB (a pharmaceticul comapny) with a price of 90 cents.
 
 
+
 ```{R Pulling DATA, include = FALSE}
 
 stocks <- c("MSFT","GOOG","AAPL","AMZN","FB","MTNB","LUV","CSCO","GLMD","RIOT","MRNA","CO")
@@ -46,20 +46,16 @@ Year_4_date = Today - years(4)
 
 data <- tq_get(stocks, get = "stock.prices", from = Year_4_date)
 
-data
-str(data)
-tail(data)
-
 
 ```
 
-
+The Following stocks I will be looking at are : `r unique(stocks)`.
 
 
 
 # Updating Dates
 
-When running this report, I use multiple different dates that depend on the current date. For example I am pulling initially 4 years of data starting in 2018. When looking at the data, for my daily and monthly returns, I may only care about 1 month of data or even 6 months of data. To do this, I will need to filter the date column based on my current date. To make this process easier and capable of being run at any date and pull fresh information. I've created date objects are are dependent on the current date. The current date is aquired using sys.date().
+When running this report, I use multiple different date filters that will depend on the current date of running the report. For example I am pulling initially 4 years of data starting in 2017. When looking at the data, for my daily and monthly returns, I may only care about 1 month of data or even 6 months of data. To do this, I will need to filter the date column based on todays date. To make this process easier and capable of being run at any date and pull fresh information. I've created date objects are are dependent on the current date. The current date is acquired using sys.date().
 
 ```{r Creating Date Variables, include= TRUE}
 
@@ -73,6 +69,7 @@ Year_4_date = Today - years(4)
 
 
 ```
+
 ## Mutating DATA
 
 Right now I have the following variables: Company symobl, date, open, high, low, close, volume and adjusted price. Using Tq_transmute, I will use the adjusted price to calculate the daily, weekly and monthly returns. This will allow me to look at the % returns and be useful when comparing stocks that have such different prices. I also wanted a good way to compare stockst that have very different prices. As mentioned above, Google has a price of 2300 dollars per share, while MTNB has a price of 90 cents per share. If we were to compare the stocks side by side, we could do a free y scale for the y axis, but I would question whether that is actually a good representation.I don't believe looking at the stocks side by side with a free scale is a fair representation of comparing stocks. We look further into that later on.

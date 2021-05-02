@@ -46,9 +46,7 @@ Year_4_date = Today - years(4)
 
 data <- tq_get(stocks, get = "stock.prices", from = Year_4_date)
 
-data
-str(data)
-tail(data)
+
 
 
 ```
