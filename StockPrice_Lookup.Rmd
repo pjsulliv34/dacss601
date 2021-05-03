@@ -1,14 +1,32 @@
+---
+title: "Untitled"
+author: "Peter Sullivan"
+date: "5/2/2021"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(tidyquant)
 library(dplyr)
+library(shiny)
+```
+
+# Stock App
+
+Pick a stock and see the last four years of recorded adjusted prices. This data was obtained from Yahoo finance using the package tidyquant.
+
+```{r APP, echo=FALSE}
+
 
 stocks <- c("MSFT","GOOG","AAPL","AMZN","FB","MTNB","LUV","CSCO","GLMD","RIOT","MRNA","CO")
-Today = Sys.Date()
-Year_4_date = Today - years(4)
+
 
 data <- tq_get(stocks, get = "stock.prices", from = Year_4_date)
 
-library(shiny)
+
 ui <- fluidPage(
     titlePanel("Stock Prices"),
     sidebarLayout(
@@ -39,5 +57,8 @@ server <- function(input, output){
 shinyApp(ui = ui, server = server)
 
 
+
+
+```
 
 

@@ -1,0 +1,13 @@
+name: Stock_Prices_LookUp
+title: Stock_Prices_LookUp
+username:
+account: pjsulliv34
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4067322
+bundleId: 4548095
+url: https://pjsulliv34.shinyapps.io/Stock_Prices_LookUp/
+when: 1620000934.50936
+lastSyncTime: 1620000934.50936
+asMultiple: FALSE
+asStatic: FALSE
