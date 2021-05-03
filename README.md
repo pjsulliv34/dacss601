@@ -11,6 +11,7 @@ These projects are from the Intro to Data Science Course offered at Umass Amhers
 [Stroke Data - HW 5](https://pjsulliv34.github.io/dacss601/HW5/HW5_StrokeData.html) <br />
 [Final_Project_HTML](https://pjsulliv34.github.io/dacss601/Final/Final-Project.html) <br />
 [Final Project_withApp](https://pjsulliv34.shinyapps.io/daccs601_final_project/)
+[StockPrice_LookUp](https://pjsulliv34.shinyapps.io/Stock_Prices_LookUp/)
 
 ### Support or Contact
 You can use the [editor on GitHub](https://github.com/pjsulliv34/dacss601/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
