@@ -104,7 +104,7 @@ IT looks like Caims had the largest amount of Rainfall at 17,157.2 mm. Due to th
 I have a lot of continuous variables. To get the idea of their layout, lets try using some histograms. To get the most bang for buck, I also want to compare similar variables. Lets look at min and max temp recorded per observation. To make this data a little simpler, we are only going to look at the top 10 cities based on amount of rainfall recorded.To have two variables on one axis, I used the density function as the y variable in the histogram. 
 
 
-```{r include=TRUE, echo=TRUE}
+```{r include=TRUE, echo=TRUE, preview = TRUE}
 rainfall_countries <- Weather_Data %>%
  group_by(Location)%>%
   summarise(total_rain = sum(Rainfall, na.rm = TRUE))%>%
