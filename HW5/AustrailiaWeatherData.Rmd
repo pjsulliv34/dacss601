@@ -22,8 +22,6 @@ library(distill)
 #changed
 
 
-
-setwd("C:/Users/pjsul/OneDrive/Desktop/R HWS/Hw4/")
 Weather_Data <- read_csv("weatherAUS.csv", na = c("", "NA"))
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
